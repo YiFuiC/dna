@@ -1,16 +1,14 @@
 from django.shortcuts import render
 from django.http import JsonResponse
+import json
 
 
 
 
 # Create your views here.
-def transcribe(request, seq):
-    
-    if type(seq) != str:
-        return JsonResponse({"error":"invalid input type"})
-
-    seq = seq.replace("\n","").replace("\r","")
+def transcribe(request):
+    seq = (json.loads(request.body).get("seq"))
+    seq = seq.replace("\n","").replace("\r","").replace("%","").replace("0","")
     seq = seq.upper()
 
     mRNA = seq.replace("T","U")
