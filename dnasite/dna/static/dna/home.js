@@ -1,9 +1,22 @@
 function loadPage() {
   submit = document.getElementById("transcribeTranslateButton");
-  submit.addEventListener("click", sequenceInput);
+
+  // Add event listener to the submit button
+  submit.addEventListener("click", function (event) {
+    textfield = document.getElementById("sequenceInput").value;
+
+    if (textfield == null || textfield == "") {
+      alert("No DNA sequence entered");
+      return;
+    }
+
+    sequenceInput();
+    event.stopPropagation();
+  });
 }
 
 function sequenceInput() {
+  // Obtain csrftoken using getCookie function found in layout.js
   const csrftoken = getCookie("csrftoken");
 
   seq = document.getElementById("sequenceInput").value;
@@ -14,8 +27,7 @@ function sequenceInput() {
     seq: seq,
   };
 
-  console.log(postData);
-
+  // Send request to API to transcribe the input DNA
   $.ajax({
     type: "POST",
     url: "/api/dna/transcribe",
@@ -25,6 +37,8 @@ function sequenceInput() {
       if (returnedValue.ok) {
         // Render data
         console.log(returnedValue);
+        mRNA = returnedValue.mRNA;
+        displaySeq(mRNA);
         return true;
       } else {
         console.log(returnedValue);
@@ -36,20 +50,30 @@ function sequenceInput() {
   });
 }
 
-function getCookie(name) {
-  let cookieValue = null;
-  if (document.cookie && document.cookie !== "") {
-    const cookies = document.cookie.split(";");
-    for (let i = 0; i < cookies.length; i++) {
-      const cookie = cookies[i].trim();
-      // Does this cookie string begin with the name we want?
-      if (cookie.substring(0, name.length + 1) === name + "=") {
-        cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
-        break;
-      }
-    }
+function displaySeq(mRNA) {
+  displayField = document.getElementById("sequences");
+
+  if (document.getElementById("outputmRNA") != null) {
+    elem = document.getElementById("outputmRNA");
+    elem.remove();
+    elem2 = document.getElementById("originalOutput");
+    elem2.remove();
   }
-  return cookieValue;
+
+  displayField.innerHTML += `
+  <div class="row justify-content-center" id="outputmRNA">
+    <div class="col">
+        <p>mRNA Sequence:</p>
+    </div>
+  </div>
+  <div class="row justify-content-center">
+    <div class="col-md" id="originalOutput">
+        <p class="word-wrap">${mRNA}</p>
+    </div>
+  </div>
+  `;
+
+  loadPage();
 }
 
 document.addEventListener("projectLoaded", loadPage());
