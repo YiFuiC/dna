@@ -3,26 +3,19 @@ from django.shortcuts import render
 from django.http import JsonResponse
 
 
-def check_sequence(seq: str, seq_type: str):
-    
-    # Determine the type of sequence that is being passed
-    if seq_type == "DNA":
-        bases = set("ACGT")
-    elif seq_type == "RNA":
-        bases = set("ACGU")
-    else:
-        return JsonResponse({
-            'ok': False,
-            'error': "Invalid Sequence"
-        })
-    
-    # Check that the sequence only contains specified bases
-    if bases.issubset(seq):
-        return True
-    else :
-        return False
+def Paginate(items: list, items_per_page: int):
 
+    pages = {}
 
+    total_pages = len(items) // items_per_page
+
+    for i in range(0, total_pages+1):
+        pages[i+1] = [item for item in items[i*items_per_page: (i+1)*items_per_page]]
+
+    total_pages = list(pages.keys())[-1]
+    
+    return pages, total_pages
+    
 
 
 

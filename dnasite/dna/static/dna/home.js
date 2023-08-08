@@ -1,45 +1,47 @@
+var total_pages;
+
 function loadPage() {
-  submit = document.getElementById("transcribeTranslateButton");
+  proteinSubmit = document.getElementById("proteinSubmit");
+
+  pForm = document.forms["pForm"];
 
   // Add event listener to the submit button
-  submit.addEventListener("click", function (event) {
-    textfield = document.getElementById("sequenceInput").value;
+  proteinSubmit.addEventListener("click", function (event) {
+    data = {};
 
-    if (textfield == null || textfield == "") {
-      alert("No DNA sequence entered");
-      return;
+    container = document.getElementById("pForm");
+
+    inputs = container.getElementsByTagName("input");
+
+    for (index = 1; index < inputs.length; ++index) {
+      if (inputs[index].value != "") {
+        data[inputs[index].id] = inputs[index].value;
+      }
     }
 
-    sequenceInput();
+    getProteins(data);
+
     event.stopPropagation();
   });
 }
 
-function sequenceInput() {
+function getProteins(data) {
   // Obtain csrftoken using getCookie function found in layout.js
   const csrftoken = getCookie("csrftoken");
 
-  seq = document.getElementById("sequenceInput").value;
-
-  console.log(seq);
-
-  postData = {
-    seq: seq,
-  };
-
-  // Send request to API to transcribe the input DNA
+  // Send request to API to get proteins
   $.ajax({
     type: "POST",
-    url: "/api/dna/transcribe",
+    url: "/api/dna/listProteins",
     headers: { "X-CSRFToken": csrftoken },
-    data: JSON.stringify(postData),
+    data: JSON.stringify(data),
     success: function (returnedValue) {
       if (returnedValue.ok) {
         // Render data
-        console.log(returnedValue);
-        mRNA = returnedValue.mRNA;
-        displaySeq(mRNA);
-        return true;
+        console.log(returnedValue.data);
+        total_pages = returnedValue.total_pages;
+        drawTable(returnedValue.data);
+        displayProteins(returnedValue.data, 1);
       } else {
         console.log(returnedValue);
       }
@@ -50,30 +52,63 @@ function sequenceInput() {
   });
 }
 
-function displaySeq(mRNA) {
-  displayField = document.getElementById("sequences");
+function drawTable(pages) {
+  console.log(total_pages);
 
-  if (document.getElementById("outputmRNA") != null) {
-    elem = document.getElementById("outputmRNA");
-    elem.remove();
-    elem2 = document.getElementById("originalOutput");
-    elem2.remove();
-  }
-
-  displayField.innerHTML += `
-  <div class="row justify-content-center" id="outputmRNA">
-    <div class="col">
-        <p>mRNA Sequence:</p>
-    </div>
-  </div>
-  <div class="row justify-content-center">
-    <div class="col-md" id="originalOutput">
-        <p class="word-wrap">${mRNA}</p>
-    </div>
-  </div>
+  proteinTableDiv = document.getElementById("proteinTableDiv");
+  proteinTableDiv.innerHTML = ``;
+  proteinTableDiv.innerHTML += `
+    <table class = "table" id="proteinTable">
+      <thead>
+        <tr>
+          <th scope="col">Name</th>
+          <th scope="col">Taxonomy ID</th>
+          <th scope="col">Full Name</th>
+        </tr>
+      </thead>
+      <tbody id="proteinTableBody">
+      </tbody>
+    </table>
+  <nav aria-label="Page navigation">
+    <ul class="pagination justify-content-center" id="proteinPagination">
+    </ul>
+  </nav>
   `;
 
-  loadPage();
+  for (index = 1; index <= total_pages; ++index) {
+    proteinPagination = document.getElementById("proteinPagination");
+
+    proteinPagination.innerHTML += `
+    
+    <li class="page-item"><a class="page-link" id="${index}">${index}</a></li>
+    
+    `;
+  }
+
+  pageNumbers = document.getElementsByClassName("page-link");
+
+  for (i = 0; i < pageNumbers.length; i++) {
+    pageNumbers[i].addEventListener("click", function (event) {
+      displayProteins(pages, this.id);
+    });
+  }
+}
+
+function displayProteins(pages, currentPage) {
+  proteinTableBody = document.getElementById("proteinTableBody");
+
+  proteinTableBody.innerHTML = ``;
+
+  for (index = 0; index < pages[currentPage].length; ++index) {
+    proteinTableBody.innerHTML += `
+    <tr id="${pages[currentPage][index].accession}">
+      <td>${pages[currentPage][index].name}</td>
+      <td>${pages[currentPage][index].taxid}</td>
+      <td>${pages[currentPage][index].fullName}</td>
+    </tr>
+    
+    `;
+  }
 }
 
 document.addEventListener("projectLoaded", loadPage());

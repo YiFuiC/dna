@@ -7,23 +7,59 @@
 
 {% block body %}
 
-    <form>
+    <form class="row g-3" id="pForm">
         {% csrf_token %}
-        <div class="form-group" id="sequences">
+                <div class="col-md-6">
+                    <label for="accession" class="form-label">Accession</label>
+                    <input type="text" class="form-control" id="accession">
+                  </div>
 
-            <div class="row justify-content-center">
-                <div class="col">
-                    <textarea class="form-control" rows="3" placeholder="Enter DNA Sequence Here"id="sequenceInput"></textarea>
-                </div>
-            </div>
-            <div class="row justify-content-center">
+                  <div class="col-md-6">
+                    <label for="chromosome" class="form-label">Chromosome</label>
+                    <input type="text" class="form-control" id="chromosome">
+                  </div>
+
+                  <div class="col-md-6">
+                    <label for="ensembl" class="form-label">Ensembl</label>
+                    <input type="text" class="form-control" id="ensembl">
+                  </div>
+
+                  <div class="col-md-6">
+                    <label for="gene" class="form-label">Gene</label>
+                    <input type="text" class="form-control" id="gene">
+                  </div>
+
+                  <div class="col-md-6">
+                    <label for="protein" class="form-label">Protein Name</label>
+                    <input type="text" class="form-control" id="protein">
+                  </div>
+
+                  <div class="col-md-6">
+                    <label for="taxid" class="form-label">Taxonomy ID</label>
+                    <input type="text" class="form-control" id="taxid">
+                  </div>
+
+                  <div class="col-md-6">
+                    <label for="location" class="form-label">Location</label>
+                    <input type="text" class="form-control" id="location">
+                  </div>
+
+            <div class="row justify-content-center gy-2">
                 <div class="col-auto">
-                    <button type="button" class="btn btn-primary btn-md btn-block" id="transcribeTranslateButton">Transcribe & Translate</button>
+                    <button type="button" class="btn btn-primary btn-md btn-block" id="proteinSubmit">Submit</button>
                 </div>
             </div>
-        </div>
 
     </form>
+
+    <br></br>
+
+    <div id = "proteinTableDiv">
+
+    </div>
+
+    {{ proteins }}
+
 
 {% endblock %}
 
