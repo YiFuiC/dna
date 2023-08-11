@@ -7,7 +7,7 @@
 
 {% block body %}
 
-    <form class="row g-3" id="pForm">
+    <form class="row g-3 justify-content-center" id="pForm">
         {% csrf_token %}
                 <div class="col-md-6">
                     <label for="accession" class="form-label">Accession</label>
@@ -44,7 +44,7 @@
                     <input type="text" class="form-control" id="location">
                   </div>
 
-            <div class="row justify-content-center gy-2">
+            <div class="row justify-content-center gy-2" id="submission">
                 <div class="col-auto">
                     <button type="button" class="btn btn-primary btn-md btn-block" id="proteinSubmit">Submit</button>
                 </div>
@@ -57,8 +57,6 @@
     <div id = "proteinTableDiv">
 
     </div>
-
-    {{ proteins }}
 
 
 {% endblock %}

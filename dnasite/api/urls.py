@@ -6,4 +6,7 @@ urlpatterns = [
     path("listProteins",
          views.listProteins,
          name="listProteins"),
+    path("getProteinDetails",
+         views.getProteinDetails,
+         name="getProteinDetails")
 ]

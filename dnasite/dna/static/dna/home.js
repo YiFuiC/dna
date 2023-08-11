@@ -19,6 +19,16 @@ function loadPage() {
       }
     }
 
+    submission = document.getElementById("submission");
+
+    submission.innerHTML += `
+    
+    <div class="spinner-border" role="status" id="loader">
+      <span class="visually-hidden">Loading...</span>
+    </div>
+
+    `;
+
     getProteins(data);
 
     event.stopPropagation();
@@ -39,6 +49,8 @@ function getProteins(data) {
       if (returnedValue.ok) {
         // Render data
         console.log(returnedValue.data);
+        loader = document.getElementById("loader");
+        loader.remove();
         total_pages = returnedValue.total_pages;
         drawTable(returnedValue.data);
         displayProteins(returnedValue.data, 1);
@@ -58,7 +70,7 @@ function drawTable(pages) {
   proteinTableDiv = document.getElementById("proteinTableDiv");
   proteinTableDiv.innerHTML = ``;
   proteinTableDiv.innerHTML += `
-    <table class = "table" id="proteinTable">
+    <table class = "table table-hover" id="proteinTable">
       <thead>
         <tr>
           <th scope="col">Name</th>
@@ -95,13 +107,19 @@ function drawTable(pages) {
 }
 
 function displayProteins(pages, currentPage) {
+  url = window.location.href;
+
   proteinTableBody = document.getElementById("proteinTableBody");
 
   proteinTableBody.innerHTML = ``;
 
   for (index = 0; index < pages[currentPage].length; ++index) {
     proteinTableBody.innerHTML += `
-    <tr id="${pages[currentPage][index].accession}">
+    <tr id="${
+      pages[currentPage][index].accession
+    }" class='clickable-row' data-href="${
+      url + "view/" + pages[currentPage][index].accession
+    }">
       <td>${pages[currentPage][index].name}</td>
       <td>${pages[currentPage][index].taxid}</td>
       <td>${pages[currentPage][index].fullName}</td>
@@ -109,6 +127,13 @@ function displayProteins(pages, currentPage) {
     
     `;
   }
+
+  // Allows for the table rows to be clickable and redirects user to protein detail page
+  jQuery(document).ready(function ($) {
+    $(".clickable-row").click(function () {
+      window.location = $(this).data("href");
+    });
+  });
 }
 
 document.addEventListener("projectLoaded", loadPage());

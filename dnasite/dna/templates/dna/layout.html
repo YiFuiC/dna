@@ -6,6 +6,9 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate" />
+    <meta http-equiv="Pragma" content="no-cache" />
+    <meta http-equiv="Expires" content="0" />
     <link href="{% static 'dna/layout.css' %}" rel="stylesheet"></link>
 
 
@@ -22,22 +25,22 @@
     <nav class="navbar navbar-expand-lg navbar-light bg-light">
         <div class="container">
             
-            <a class="navbar-brand">DNAsite</a>
+            <a class="navbar-brand" href="{% url 'home' %}">DNAsite</a>
             <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
                 <span class="navbar-toggler-icon"></span>
             </button>
             <div class="collapse navbar-collapse" id="navbarNavAltMarkup">
                 <div class="navbar-nav">
                     <a class="nav-item nav-link" href="{% url 'home' %}">Search by Protein</a>
-                    <a class="nav-item nav-link" href="#">Search by DNA</a>
+                    <a class="nav-item nav-link" href="">Search by DNA</a>
                 </div>
             </div>
         </div>
     </nav>
     <br></br>
     <div class="body">
-        <div id="main-content" class="content">
-            <div class="container">
+        <div class="content">
+            <div class="container" id="main-content">
                 {% block body %}
                 {% endblock %}
             </div>
